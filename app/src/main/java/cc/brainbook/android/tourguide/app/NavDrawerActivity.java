@@ -2,7 +2,6 @@ package cc.brainbook.android.tourguide.app;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -15,14 +14,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import cc.brainbook.android.tourguide.Overlay;
 import cc.brainbook.android.tourguide.Pointer;
-import cc.brainbook.android.tourguide.Sequence;
 import cc.brainbook.android.tourguide.ToolTip;
 import cc.brainbook.android.tourguide.TourGuide;
 
 public class NavDrawerActivity extends AppCompatActivity {
     TextView mTextView1;
     NavDrawerActivity mActivity;
-    Sequence mSequence;
     TourGuide mTutorialHandler;
     DrawerLayout mDrawerLayout;
     @Override
