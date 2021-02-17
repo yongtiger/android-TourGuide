@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cc.brainbook.android.tourguide.app">
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".ToolbarActivity"
+            android:label="Toolbar Activity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".BasicActivity"
+            android:label="Basic Activity" />
+        <activity
+            android:name=".ToolTipGravityActivity"
+            android:label="Tooltip Gravity Activity" />
+        <activity
+            android:name=".ToolTipCustomizationActivity"
+            android:label="ToolTip Customization Activity" />
+        <activity
+            android:name=".OverlayCustomizationActivity"
+            android:label="Overlay Customization Activity" />
+        <activity
+            android:name=".MultipleToolTipActivity"
+            android:label="Multiple Tooltip Activity" />
+        <activity
+            android:name=".NoPointerActivity"
+            android:label="NoPointer Activity" />
+        <activity
+            android:name=".NoPointerNoToolTipActivity"
+            android:label="Overlay Only Activity" />
+        <activity
+            android:name=".NoOverlayActivity"
+            android:label="No Overlay Activity" />
+        <activity
+            android:name=".ManualSequenceActivity"
+            android:label="Manual Sequence Activity" />
+        <activity
+            android:name=".OverlaySequenceTourActivity"
+            android:label="Overlay Activity (using Sequence Class)" />
+        <activity
+            android:name=".NavDrawerActivity"
+            android:label="Navigational Drawer Activity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".MemoryLeakTestActivity"
+            android:label="Memory Leak Test Activity" />
+        <activity
+            android:name=".RoundedRectangleOverlayActivity"
+            android:label="Rounded Rectangle Activity" />
+        <activity
+            android:name=".AdjustPaddingOverlayActivity"
+            android:label="Adjust Overlay Padding Activity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".RecyclerViewActivity"
+            android:label="RecyclerView Activity" />
+        <activity
+            android:name=".MainActivity"
+            android:label="Tour Guide Demo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Test Activity -->
+        <activity
+            android:name=".ToolTipMeasureTestActivity"
+            android:exported="true"
+            android:label="ToolTip Measure Test Activity" />
+
+    </application>
+
+</manifest>
