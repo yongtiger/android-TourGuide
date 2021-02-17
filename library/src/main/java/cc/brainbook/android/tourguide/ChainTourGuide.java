@@ -3,6 +3,8 @@ package cc.brainbook.android.tourguide;
 import android.app.Activity;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 /**
  * {@link ChainTourGuide} is designed to be used with {@link Sequence}. The purpose is to run TourGuide in a series.
  * {@link ChainTourGuide} extends from {@link TourGuide} with extra capability to be run in sequence.
@@ -83,7 +85,7 @@ public class ChainTourGuide extends TourGuide {
         return this;
     }
 
-    public ChainTourGuide setSequence(Sequence sequence){
+    public ChainTourGuide setSequence(@NonNull Sequence sequence){
         mSequence = sequence;
         mSequence.setParentTourGuide(this);
         for (ChainTourGuide tourGuide : sequence.mTourGuideArray){
