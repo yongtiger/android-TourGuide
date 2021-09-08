@@ -30,7 +30,7 @@ public class FrameLayoutWithHole extends FrameLayout {
     private TourGuide.MotionType mMotionType;
     private Paint mEraser;
 
-    Bitmap mEraserBitmap;
+    private Bitmap mEraserBitmap;
     private Canvas mEraserCanvas;
     private Paint mPaint;
     private Paint transparentPaint;
@@ -134,8 +134,21 @@ public class FrameLayoutWithHole extends FrameLayout {
         size.x = mActivity.getResources().getDisplayMetrics().widthPixels;
         size.y = mActivity.getResources().getDisplayMetrics().heightPixels;
 
-        mEraserBitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
-        mEraserCanvas = new Canvas(mEraserBitmap);
+        ///[FIX#Bitmap.createBitmap导致内存溢出]
+        ///1:尽量少用慎用createBitmap，用了必须try catch
+        ///2:在catch中处理，不然就不走了，判断是否是OutOfMemoryError，在处理
+        ///3:处理一般返回默认图片，要么就根据path，用BitmapFactory.decodeStream（new FileInputStream(path)）来获取bitmap对象
+        ///4:bitmap用完一定要回收recycle
+        ///https://blog.csdn.net/qq_16131393/article/details/103458663
+        ///https://blog.csdn.net/tangnengwu/article/details/36185361
+//        mEraserBitmap = Bitmap.createBitmap(size.x, size.y,Bitmap.Config.ARGB_8888);
+        try {
+            mEraserBitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_4444);
+            mEraserCanvas = new Canvas(mEraserBitmap);
+        } catch (OutOfMemoryError error) {
+            mEraserBitmap = null;
+            mEraserCanvas = new Canvas();
+        }
 
         mPaint = new Paint();
         mPaint.setColor(0xcc000000);
@@ -194,7 +207,18 @@ public class FrameLayoutWithHole extends FrameLayout {
         super.onDetachedFromWindow();
         /* cleanup reference to prevent memory leak */
         mEraserCanvas.setBitmap(null);
-        mEraserBitmap = null;
+
+        ///[FIX#Bitmap.createBitmap导致内存溢出]
+        ///1:尽量少用慎用createBitmap，用了必须try catch
+        ///2:在catch中处理，不然就不走了，判断是否是OutOfMemoryError，在处理
+        ///3:处理一般返回默认图片，要么就根据path，用BitmapFactory.decodeStream（new FileInputStream(path)）来获取bitmap对象
+        ///4:bitmap用完一定要回收recycle
+        ///https://blog.csdn.net/qq_16131393/article/details/103458663
+        ///https://blog.csdn.net/tangnengwu/article/details/36185361
+        if (mEraserBitmap != null && !mEraserBitmap.isRecycled()) {
+            mEraserBitmap.recycle();
+            mEraserBitmap = null;
+        }
 
         if (mAnimatorSetArrayList != null && !mAnimatorSetArrayList.isEmpty()) {
             for (int i = 0; i < mAnimatorSetArrayList.size(); i++) {
@@ -280,7 +304,8 @@ public class FrameLayoutWithHole extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mEraserBitmap.eraseColor(Color.TRANSPARENT);
+        if (mEraserBitmap != null)
+            mEraserBitmap.eraseColor(Color.TRANSPARENT);
 
         if (mOverlay != null) {
             mEraserCanvas.drawColor(mOverlay.mBackgroundColor);
@@ -314,8 +339,8 @@ public class FrameLayoutWithHole extends FrameLayout {
                         holeRadius, mEraser);
             }
         }
-        canvas.drawBitmap(mEraserBitmap, 0, 0, null);
-
+        if (mEraserBitmap != null)
+            canvas.drawBitmap(mEraserBitmap, 0, 0, null);
     }
 
     @Override

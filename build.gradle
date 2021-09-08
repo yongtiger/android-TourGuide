@@ -9,8 +9,8 @@ buildscript {
         ]
 
         release = [
-                versionName: "0.1.0",   ///v0.1.0#update gradle:7.0.2
-                versionCode: 100
+                versionName: "0.1.1",   ///v0.1.1#[FIX#FrameLayoutWithHole#Bitmap.createBitmap导致内存溢出]
+                versionCode: 101
         ]
     }
 
