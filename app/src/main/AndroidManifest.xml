@@ -61,7 +61,8 @@
             android:label="RecyclerView Activity" />
         <activity
             android:name=".MainActivity"
-            android:label="Tour Guide Demo">
+            android:label="Tour Guide Demo"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

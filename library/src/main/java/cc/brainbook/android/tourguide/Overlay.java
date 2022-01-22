@@ -129,7 +129,7 @@ public class Overlay {
     /**
      * This method sets the padding to be applied to the hole cutout from the overlay
      * @param paddingDp padding, in dp
-     * @return {@link Overlay} intance for chaining purpose
+     * @return {@link Overlay} instance for chaining purpose
      */
     public Overlay setHolePadding(int paddingDp){
         mPaddingDp = paddingDp;

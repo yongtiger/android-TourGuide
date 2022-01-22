@@ -18,9 +18,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.text.TextUtilsCompat;
 import androidx.core.view.ViewCompat;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
+
+import java.util.Locale;
 
 /**
  * Created by tanjunrong on 2/10/15.
@@ -48,6 +51,10 @@ public class TourGuide {
     public ToolTip mToolTip;
     public Pointer mPointer;
     public Overlay mOverlay;
+
+    public boolean isRtl;
+    public int mPointerDir;
+    public int mToolTipDir;
 
     /*************
      *
@@ -154,17 +161,31 @@ public class TourGuide {
      *******/
     //TODO: move into Pointer
     private int getXBasedOnGravity(int width){
+        ViewGroup parent = (ViewGroup) mActivity.getWindow().getDecorView();
+
         int [] pos = new int[2];
         mHighlightedView.getLocationOnScreen(pos);
-        int x = pos[0];
-        if((mPointer.mGravity & Gravity.RIGHT) == Gravity.RIGHT){
-            return x+mHighlightedView.getWidth()-width;
-        } else if ((mPointer.mGravity & Gravity.LEFT) == Gravity.LEFT) {
-            return x;
-        } else { // this is center
-            return x+mHighlightedView.getWidth()/2-width/2;
+        int targetViewX = pos[0];
+
+        if (isRtl) {
+            if (mPointerDir == -1){
+                return parent.getWidth() - targetViewX - mHighlightedView.getWidth() / 2;
+            } else if (mPointerDir == 1) {
+                return parent.getWidth() - targetViewX - mHighlightedView.getWidth() / 2 - width;
+            } else {
+                return parent.getWidth() - targetViewX - mHighlightedView.getWidth() / 2 - width / 2;
+            }
+        } else {
+            if (mPointerDir == -1){
+                return targetViewX;
+            } else if (mPointerDir == 1) {
+                return targetViewX + mHighlightedView.getWidth() - width;
+            } else {
+                return targetViewX + mHighlightedView.getWidth() / 2 - width / 2;
+            }
         }
     }
+
     //TODO: move into Pointer
     private int getYBasedOnGravity(int height){
         int [] pos = new int[2];
@@ -180,6 +201,14 @@ public class TourGuide {
     }
 
     protected void setupView(){
+        isRtl = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault()) == ViewCompat.LAYOUT_DIRECTION_RTL;
+        if (mPointer != null) {
+            mPointerDir = getGravityDir(isRtl, mPointer.mGravity);
+        }
+        if (mToolTip != null) {
+            mToolTipDir = getGravityDir(isRtl, mToolTip.mGravity);
+        }
+
         // TourGuide can only be setup after all the views is ready and obtain it's position/measurement
         // so when this is the 1st time TourGuide is being added,
         // else block will be executed, and ViewTreeObserver will make TourGuide setup process to be delayed until everything is ready
@@ -200,6 +229,22 @@ public class TourGuide {
                     startView();
                 }
             });
+        }
+    }
+
+    private int getGravityDir(boolean isRtl, int gravity) {
+        if (!isRtl && (gravity & Gravity.START) == Gravity.START
+                || isRtl && (gravity & Gravity.END) == Gravity.END) {
+            return -1;
+        } else if (!isRtl && (gravity & Gravity.END) == Gravity.END
+                || isRtl && (gravity & Gravity.START) == Gravity.START) {
+            return 1;
+        } else if ((gravity & Gravity.LEFT) == Gravity.LEFT) {
+            return -1;
+        } else if ((gravity & Gravity.RIGHT) == Gravity.RIGHT) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -351,44 +396,41 @@ public class TourGuide {
                     int fixedY;
                     int toolTipHeightAfterLayouted = mToolTipViewGroup.getHeight();
                     fixedY = getYForTooTip(mToolTip.mGravity, toolTipHeightAfterLayouted, targetViewY, adjustment);
-                    layoutParams.setMargins((int) mToolTipViewGroup.getX(), fixedY, 0, 0);
+//                    layoutParams.setMargins((int) mToolTipViewGroup.getX(), fixedY, 0, 0);
+                    layoutParams.setMargins(isRtl ? 0 : (int) mToolTipViewGroup.getX(), fixedY, isRtl ? (int) mToolTipViewGroup.getX() : 0, 0);
                 }
             });
 
             // set the position using setMargins on the left and top
-            layoutParams.setMargins(resultPoint.x, resultPoint.y, 0, 0);
+//            layoutParams.setMargins(resultPoint.x, resultPoint.y, 0, 0);
+            layoutParams.setMargins(isRtl ? 0 : resultPoint.x, resultPoint.y, isRtl ? resultPoint.x : 0, 0);
         }
 
     }
-
     private int getXForTooTip(int gravity, int toolTipMeasuredWidth, int targetViewX, float adjustment){
-        int x;
-        if ((gravity & Gravity.LEFT) == Gravity.LEFT){
-            x = targetViewX - toolTipMeasuredWidth + (int)adjustment;
-        } else if ((gravity & Gravity.RIGHT) == Gravity.RIGHT) {
-            x = targetViewX + mHighlightedView.getWidth() - (int)adjustment;
+        if (mToolTipDir == -1){
+            return targetViewX - toolTipMeasuredWidth + (int)adjustment;
+        } else if (mToolTipDir == 1) {
+            return targetViewX + mHighlightedView.getWidth() - (int)adjustment;
         } else {
-            x = targetViewX + mHighlightedView.getWidth() / 2 - toolTipMeasuredWidth / 2;
+            return targetViewX + mHighlightedView.getWidth() / 2 - toolTipMeasuredWidth / 2;
         }
-        return x;
     }
-    private int getYForTooTip(int gravity, int toolTipMeasuredHeight, int targetViewY, float adjustment){
-        int y;
-        if ((gravity & Gravity.TOP) == Gravity.TOP) {
 
+    private int getYForTooTip(int gravity, int toolTipMeasuredHeight, int targetViewY, float adjustment){
+        if ((gravity & Gravity.TOP) == Gravity.TOP) {
             if (((gravity & Gravity.LEFT) == Gravity.LEFT) || ((gravity & Gravity.RIGHT) == Gravity.RIGHT)) {
-                y =  targetViewY - toolTipMeasuredHeight + (int)adjustment;
+                return  targetViewY - toolTipMeasuredHeight + (int)adjustment;
             } else {
-                y =  targetViewY - toolTipMeasuredHeight - (int)adjustment;
+                return  targetViewY - toolTipMeasuredHeight - (int)adjustment;
             }
         } else { // this is center
             if (((gravity & Gravity.LEFT) == Gravity.LEFT) || ((gravity & Gravity.RIGHT) == Gravity.RIGHT)) {
-                y =  targetViewY + mHighlightedView.getHeight() - (int) adjustment;
+                return  targetViewY + mHighlightedView.getHeight() - (int) adjustment;
             } else {
-                y =  targetViewY + mHighlightedView.getHeight() + (int) adjustment;
+                return  targetViewY + mHighlightedView.getHeight() + (int) adjustment;
             }
         }
-        return y;
     }
 
     private FloatingActionButton setupAndAddFABToFrameLayout(final FrameLayoutWithHole frameLayoutWithHole){
@@ -421,10 +463,11 @@ public class TourGuide {
                 frameLayoutWithHole.addView(fab, params);
 
                 // measure size of image to be placed
-                params.setMargins(getXBasedOnGravity(invisFab.getWidth()), getYBasedOnGravity(invisFab.getHeight()), 0, 0);
+//                params.setMargins(getXBasedOnGravity(invisFab.getWidth()), getYBasedOnGravity(invisFab.getHeight()), 0, 0);
+                params.setMargins(isRtl ? 0 : getXBasedOnGravity(invisFab.getWidth()), getYBasedOnGravity(invisFab.getHeight()),
+                        isRtl ? getXBasedOnGravity(invisFab.getWidth()) : 0, 0);
             }
         });
-
 
         return fab;
     }

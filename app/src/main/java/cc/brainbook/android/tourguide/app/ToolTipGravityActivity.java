@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import cc.brainbook.android.tourguide.Pointer;
 import cc.brainbook.android.tourguide.ToolTip;
 import cc.brainbook.android.tourguide.TourGuide;
 
@@ -49,7 +50,7 @@ public class ToolTipGravityActivity extends AppCompatActivity {
                         .setTextColor(Color.parseColor("#FFFFFF"))
                         .setGravity(gravity)
                         .setShadow(true))
-                .setPointer(null)
+                .setPointer(new Pointer())
                 .setOverlay(null)
                 .playOn(button);
 

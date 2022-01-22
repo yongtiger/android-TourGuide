@@ -31,12 +31,12 @@ public class BasicActivity extends AppCompatActivity {
         final Button button2 = findViewById(R.id.button2);
 
         final TourGuide tourGuide = TourGuide.init(this)
-                .setPointer(new Pointer(gravityDemo ? (Gravity.BOTTOM | Gravity.END) : Gravity.CENTER,
+                .setPointer(new Pointer(Gravity.END,
                         colorDemo ? Color.RED : Color.WHITE))
                 .setOverlay(new Overlay().setBackgroundColor(Color.parseColor("#66FF0000")))
                 .setToolTip(new ToolTip()
                 .setTitle("Welcome!")
-                .setDescription("Click on Get Started to begin..."))
+                .setDescription("Click").setGravity(Gravity.END))
                 .playOn(button1);
 
         button1.setOnClickListener(new View.OnClickListener() {
