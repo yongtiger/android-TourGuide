@@ -37,5 +37,5 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "androidx.drawerlayout:drawerlayout:1.1.1"
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 }

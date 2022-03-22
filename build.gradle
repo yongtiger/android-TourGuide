@@ -9,8 +9,8 @@ buildscript {
         ]
 
         release = [
-                versionName: "0.1.4",   ///v0.1.4#upgrade com.android.tools.build:gradle:7.1.2
-                versionCode: 104
+                versionName: "0.1.5",   ///v0.1.5#upgrade com.android.tools.build:gradle:7.1.2
+                versionCode: 105
         ]
     }
 
