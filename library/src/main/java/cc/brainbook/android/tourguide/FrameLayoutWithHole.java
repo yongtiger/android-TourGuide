@@ -145,7 +145,7 @@ public class FrameLayoutWithHole extends FrameLayout {
         try {
             mEraserBitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_4444);
             mEraserCanvas = new Canvas(mEraserBitmap);
-        } catch (OutOfMemoryError error) {
+        } catch (Exception error) {
             mEraserBitmap = null;
             mEraserCanvas = new Canvas();
         }
